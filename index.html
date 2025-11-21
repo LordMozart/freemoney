@@ -9,43 +9,83 @@ body {
   margin: 0;
   height: 100vh;
   overflow: hidden;
-  background-color: #f0f0f0;
+  background: radial-gradient(circle at top, #cfd8dc, #90a4ae);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  font-family: Arial, sans-serif;
+  font-family: 'Comic Sans MS', Arial, sans-serif;
+  user-select: none;
 }
 
 /* ads */
 .ad {
   position: absolute;
   cursor: grab;
-  z-index: 10; /* ads above kick button, below HUD */
-  opacity: 0.95;
+  z-index: 10;
+  opacity: 0.97;
+  border: 3px solid #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  animation: floatIn 0.4s ease;
+  background-color: white;
+  transition: transform 0.15s;
+}
+.ad:hover {
+  transform: scale(1.05);
 }
 .ad img {
+  display: block;
   max-width: 160px;
   max-height: 160px;
+  border-radius: 8px;
   user-select: none;
   pointer-events: none;
+}
+.ad .close-btn {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  font-weight: bold;
+  font-family: sans-serif;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 18px;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 15;
+  transition: background-color 0.2s, transform 0.15s;
+}
+.ad .close-btn:hover {
+  background: red;
+  transform: scale(1.2);
+}
+
+@keyframes floatIn {
+  0% { transform: scale(0.6) rotate(-5deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
 }
 
 /* buttons */
 #startButton, #addTimeButton {
   padding: 28px 40px;
-  background-color: #007bff;
+  background: linear-gradient(135deg, #007bff, #0056b3);
   color: white;
   border: none;
   font-size: 24px;
   cursor: pointer;
-  border-radius: 10px;
-  transition: background-color 0.3s, transform 0.12s;
+  border-radius: 14px;
+  transition: all 0.3s;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.3);
 }
 
-#startButton:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
+#startButton:hover, #addTimeButton:hover {
+  background: linear-gradient(135deg, #0056b3, #004097);
+  transform: scale(1.08);
 }
 
 #addTimeButton {
@@ -53,33 +93,64 @@ body {
   position: absolute;
   bottom: 40px;
   left: 50%;
-  /* keep it centered via translateX; set transform-origin to center so scaling doesn't change the translate reference unexpectedly */
   transform: translateX(-50%);
-  transform-origin: center center;
-  z-index: 0; /* behind ads */
+  z-index: 0;
 }
-/* hover will scale while preserving the translate; transform-origin prevents odd shifts */
-#addTimeButton:hover {
-  background-color: #0056b3;
-  transform: translateX(-50%) scale(1.05);
-}
-
-/* when disabled, don't apply the hover scale (prevents flicker/shift while disabled) */
-#addTimeButton.disabled:hover {
-  transform: translateX(-50%);
-  background-color: #bbb;
-  cursor: not-allowed;
+#addTimeButton:active {
+  transform: translateX(-50%) scale(0.95);
 }
 
 #startButton { margin-top: 20px; z-index: 50; }
-#titleScreen { font-size: 42px; font-weight: bold; margin-bottom: 10px; text-align: center; }
-#newUpdateBanner { background-color: #ff4444; color: white; font-weight: bold; padding: 10px 20px; border-radius: 8px; margin-bottom: 15px; font-size: 20px; animation: pulse 1.2s infinite; z-index: 50; }
-@keyframes pulse { 0% { transform: scale(1); opacity: 1 } 50% { transform: scale(1.1); opacity: 0.8 } 100% { transform: scale(1); opacity: 1 } }
 
-#instructions { font-size: 18px; margin-bottom: 20px; text-align: center; max-width: 500px; z-index: 50; }
+#titleScreen {
+  font-size: 48px;
+  font-weight: 900;
+  margin-bottom: 10px;
+  text-align: center;
+  text-shadow: 2px 2px 8px #00000055;
+  color: #222;
+}
 
-/* HUD (always on top) */
-#lifeSupportImage { width: 200px; height: auto; margin-bottom: 15px; position: relative; z-index: 100; }
+#newUpdateBanner {
+  background: linear-gradient(90deg, #ff4444, #ff7777);
+  color: white;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  font-size: 22px;
+  animation: pulse 1.2s infinite;
+  z-index: 50;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1 }
+  50% { transform: scale(1.1); opacity: 0.85 }
+  100% { transform: scale(1); opacity: 1 }
+}
+
+#instructions {
+  font-size: 19px;
+  margin-bottom: 20px;
+  text-align: center;
+  max-width: 500px;
+  z-index: 50;
+  color: #333;
+}
+
+/* HUD */
+#lifeSupportImage {
+  width: 220px;
+  height: auto;
+  margin-bottom: 15px;
+  position: relative;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+#lifeSupportImage:active {
+  transform: rotate(-5deg) scale(0.97);
+}
+
 #timerContainer {
   position: absolute;
   top: 60px;
@@ -87,51 +158,86 @@ body {
   transform: translateX(-50%);
   width: 60%;
   background-color: #ddd;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
   display: none;
   z-index: 100;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.25);
 }
-#timerBar { height: 25px; width: 100%; background-color: #28a745; transition: width 0.3s; }
+#timerBar {
+  height: 25px;
+  width: 100%;
+  background: linear-gradient(90deg, #28a745, #218838);
+  transition: width 0.3s, background-color 0.3s;
+}
 
-#scoreCounter {
+#scoreCounter, #highScore {
   position: absolute;
-  top: 15px;
   left: 20px;
-  font-size: 24px;
   font-weight: bold;
-  z-index: 100;
+  color: #222;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.4);
+}
+#scoreCounter {
+  top: 15px;
+  font-size: 24px;
 }
 #highScore {
-  position: absolute;
   top: 50px;
-  left: 20px;
   font-size: 20px;
-  font-weight: bold;
-  z-index: 100;
 }
 
 /* game over */
 #gameOverScreen {
   display: none;
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.8); color: white; font-size: 40px; font-weight: bold;
-  flex-direction: column; justify-content: center; align-items: center; z-index: 200; opacity: 0; transition: opacity 0.8s;
+  background: rgba(0,0,0,0.85);
+  color: white;
+  font-size: 42px;
+  font-weight: bold;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.8s;
+  text-align: center;
 }
 #gameOverScreen.show { display: flex; opacity: 1; }
 #finalScore { font-size: 28px; margin-top: 15px; }
 
-#restartButton { margin-top: 20px; padding: 15px 25px; font-size: 20px; background-color: #ff4444; border: none; border-radius: 8px; color: white; cursor: pointer; transition: background-color 0.3s; z-index: 200; }
-#restartButton:hover { background-color: #cc0000; }
+#restartButton {
+  margin-top: 25px;
+  padding: 16px 30px;
+  font-size: 22px;
+  background: linear-gradient(90deg, #ff4444, #cc0000);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+}
+#restartButton:hover {
+  background: linear-gradient(90deg, #cc0000, #990000);
+  transform: scale(1.05);
+}
 
-.disabled { background-color: #bbb; cursor: not-allowed; }
+.disabled {
+  background: gray !important;
+  cursor: not-allowed;
+  transform: none !important;
+}
 </style>
 </head>
 <body>
 
 <div id="newUpdateBanner">🚨 NEW UPDATE 🚨 - Version beta alpha sigma prefix bugpatch 1.69 2000</div>
 <div id="titleScreen">Grampa's Life Support Simulator 2000 Edition!</div>
-<div id="instructions">Attempt to kill grandpa by pressing the blue button before the timer runs out!<br>But beware of the annoying ads that try to block you...</div>
+<div id="instructions">
+  Attempt to kill grandpa by pressing the blue button before the timer runs out!<br>
+  But beware of the annoying ads that try to block you...
+</div>
 
 <img id="lifeSupportImage" src="image1.png" alt="Life Support Image">
 <button id="startButton">Start Game</button>
@@ -142,7 +248,7 @@ body {
 <div id="highScore">High Score: 0</div>
 
 <div id="gameOverScreen">
-  <div id="gameOverText">Game Over!</div>
+  <div id="gameOverText">💀 Game Over! 💀</div>
   <div id="finalScore">Final Score: 0</div>
   <button id="restartButton">Restart</button>
 </div>
@@ -234,10 +340,10 @@ function updateTimerBar() {
   let cappedTime = Math.min(timer, 10);
   let percent = Math.max(0, (cappedTime / 10) * 100);
   timerBar.style.width = percent + "%";
-  timerBar.style.backgroundColor =
-    percent > 50 ? "#28a745" :
-    percent > 20 ? "#ffc107" :
-    "#dc3545";
+  timerBar.style.background =
+    percent > 50 ? "linear-gradient(90deg,#28a745,#218838)" :
+    percent > 20 ? "linear-gradient(90deg,#ffc107,#ffb007)" :
+    "linear-gradient(90deg,#dc3545,#b02a37)";
 }
 
 function updateScore() { scoreCounter.innerText = "Score: " + score; }
@@ -247,6 +353,17 @@ function spawnAd() {
   adsSpawned++;
   const adDiv = document.createElement("div");
   adDiv.classList.add("ad");
+
+  // Close button
+  const closeBtn = document.createElement("div");
+  closeBtn.classList.add("close-btn");
+  closeBtn.textContent = "✖";
+  closeBtn.onclick = (e) => {
+    e.stopPropagation();
+    adDiv.remove();
+  };
+  adDiv.appendChild(closeBtn);
+
   const adImage = new Image();
   adImage.src = adImages[Math.floor(Math.random()*adImages.length)];
   adDiv.appendChild(adImage);
@@ -280,17 +397,14 @@ function spawnAd() {
   }
 }
 
-/* draggable with mouse + touch */
+/* draggable */
 function makeDraggable(element) {
   let pos1=0, pos2=0, pos3=0, pos4=0;
   let isDragging = false;
 
   function getClientPos(e) {
-    if (e.touches) {
-      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    } else {
-      return { x: e.clientX, y: e.clientY };
-    }
+    if (e.touches) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
   }
 
   function dragStart(e) {
@@ -299,7 +413,6 @@ function makeDraggable(element) {
     pos3 = pos.x;
     pos4 = pos.y;
     isDragging = false;
-
     document.onmouseup = closeDrag;
     document.onmousemove = dragElement;
     document.ontouchend = closeDrag;
@@ -314,7 +427,6 @@ function makeDraggable(element) {
     pos2 = pos4 - pos.y;
     pos3 = pos.x;
     pos4 = pos.y;
-
     element.style.top = (element.offsetTop - pos2) + "px";
     element.style.left = (element.offsetLeft - pos1) + "px";
   }
@@ -324,9 +436,10 @@ function makeDraggable(element) {
     document.onmousemove = null;
     document.ontouchend = null;
     document.ontouchmove = null;
-
     if (!isDragging) {
-      window.open(adLink, "_blank");
+      if (!e.target.classList.contains("close-btn")) {
+        window.open(adLink, "_blank");
+      }
     } else {
       if (
         element.offsetLeft < 20 ||
@@ -345,7 +458,9 @@ function makeDraggable(element) {
 }
 
 function endGame() {
-  clearInterval(gameInterval); clearInterval(spawnInterval); clearInterval(scoreInterval);
+  clearInterval(gameInterval);
+  clearInterval(spawnInterval);
+  clearInterval(scoreInterval);
   gameRunning=false;
   finalScore.innerText = "Final Score: " + score;
   if (score > highScore) {
